@@ -1,81 +1,38 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core'
-import { RouterOutlet } from '@angular/router'
+import {ChangeDetectionStrategy, Component, input, InputSignal} from '@angular/core'
 import {
   ColumnDef,
   createAngularTable,
   FlexRenderDirective,
   getCoreRowModel,
 } from '@tanstack/angular-table'
+import {UserAccount} from '../../app';
 
-type Person = {
-  firstName: string
-  lastName: string
-  age: number
-  visits: number
-  status: string
-  progress: number
-}
-
-const defaultData: Person[] = [
+const defaultColumns: ColumnDef<UserAccount>[] = [
   {
-    firstName: 'tanner',
-    lastName: 'linsley',
-    age: 24,
-    visits: 100,
-    status: 'In Relationship',
-    progress: 50,
-  },
-  {
-    firstName: 'tandy',
-    lastName: 'miller',
-    age: 40,
-    visits: 40,
-    status: 'Single',
-    progress: 80,
-  },
-  {
-    firstName: 'joe',
-    lastName: 'dirte',
-    age: 45,
-    visits: 20,
-    status: 'Complicated',
-    progress: 10,
-  },
-]
-
-const defaultColumns: ColumnDef<Person>[] = [
-  {
-    accessorKey: 'firstName',
+    accessorKey: 'documento_identidad',
+    header: () => 'Documento',
     cell: (info) => info.getValue(),
-    footer: (info) => info.column.id,
   },
   {
-    accessorFn: (row) => row.lastName,
-    id: 'lastName',
+    accessorKey: 'codigo',
+    header: () => `<span>Código</span>`,
     cell: (info) => `<i>${info.getValue<string>()}</i>`,
-    header: () => `<span>Last Name</span>`,
-    footer: (info) => info.column.id,
   },
   {
-    accessorKey: 'age',
-    header: () => 'Age',
-    footer: (info) => info.column.id,
+    accessorKey: 'nombres',
+    header: () => `<span>Nombre Completo</span>`,
+    cell: (info) => `<i>${info.getValue<string>()}</i>`,
   },
   {
-    accessorKey: 'visits',
-    header: () => `<span>Visits</span>`,
-    footer: (info) => info.column.id,
+    accessorKey: 'direccion',
+    header: () => 'Dirección',
+    cell: (info) => `<i>${info.getValue<string>()}</i>`,
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-    footer: (info) => info.column.id,
-  },
-  {
-    accessorKey: 'progress',
-    header: 'Profile Progress',
-    footer: (info) => info.column.id,
-  },
+    accessorKey: 'deuda_total',
+    header: () => 'Deuda Total',
+    cell: (info) => `<i>${info.getValue<string>()}</i>`,
+  }
 ]
 
 @Component({
@@ -86,17 +43,13 @@ const defaultColumns: ColumnDef<Person>[] = [
   styleUrl: './table.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Table {
-  data = signal<Person[]>(defaultData)
+export class TableComponent {
+  user: InputSignal<UserAccount[]> = input.required<UserAccount[]>()
 
   table = createAngularTable(() => ({
-    data: this.data(),
+    data: this.user(),
     columns: defaultColumns,
     getCoreRowModel: getCoreRowModel(),
     debugTable: true,
   }))
-
-  rerender() {
-    this.data.set([...defaultData.sort(() => -1)])
-  }
 }
